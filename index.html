@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cálculo de Custos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        form input, form select, form button {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        form button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        form button:hover {
+            background-color: #45a049;
+        }
+
+        #results {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 1.5rem;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        #results p {
+            font-size: 1.2rem;
+            margin: 0.5rem 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1rem 0;
+            background-color: #4CAF50;
+            color: white;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Calculadora de Custos</h1>
+    </header>
+
+    <form id="calculationForm">
+        <label for="potencial">Potencial:</label>
+        <input type="number" id="potencial" step="0.01" required>
+
+        <label for="CUB">CUB:</label>
+        <input type="number" id="CUB" step="0.01" required>
+
+        <label for="aco_mercado">Aço Mercado:</label>
+        <input type="number" id="aco_mercado" step="0.01" required>
+
+        <label for="concreto_mercado">Concreto Mercado:</label>
+        <input type="number" id="concreto_mercado" step="0.01" required>
+
+        <label for="laje_mercado">Laje Mercado:</label>
+        <input type="number" id="laje_mercado" step="0.01" required>
+
+        <label for="revestimentos_m2">Revestimentos (m²):</label>
+        <input type="number" id="revestimentos_m2" step="0.01" required>
+
+        <label for="revestimento_consumo">Revestimento Consumo:</label>
+        <input type="number" id="revestimento_consumo" step="0.01" required>
+
+        <label for="esquadrias_consumo">Esquadrias Consumo:</label>
+        <input type="number" id="esquadrias_consumo" step="0.01" required>
+
+        <label for="esquadrias_m2">Esquadrias (m²):</label>
+        <input type="number" id="esquadrias_m2" step="0.01" required>
+
+        <label for="laje_m2">Laje (m²):</label>
+        <input type="number" id="laje_m2" step="0.01" required>
+
+        <label for="padrao_construtivo">Padrão Construtivo:</label>
+        <select id="padrao_construtivo" required>
+            <option value="Baixo">Baixo</option>
+            <option value="Normal">Normal</option>
+            <option value="Alto">Alto</option>
+        </select>
+
+        <button type="button" onclick="calculate()">Calcular</button>
+    </form>
+
+    <div id="results"></div>
+
+    <footer>
+        <p>&copy; 2024 Calculadora de Custos</p>
+    </footer>
+
+    <script>
+        function calculate() {
+            const potencial = parseFloat(document.getElementById('potencial').value);
+            const CUB = parseFloat(document.getElementById('CUB').value);
+            const aco_mercado = parseFloat(document.getElementById('aco_mercado').value);
+            const concreto_mercado = parseFloat(document.getElementById('concreto_mercado').value);
+            const laje_mercado = parseFloat(document.getElementById('laje_mercado').value);
+            const revestimentos_m2 = parseFloat(document.getElementById('revestimentos_m2').value);
+            const revestimento_consumo = parseFloat(document.getElementById('revestimento_consumo').value);
+            const esquadrias_consumo = parseFloat(document.getElementById('esquadrias_consumo').value);
+            const esquadrias_m2 = parseFloat(document.getElementById('esquadrias_m2').value);
+            const padrao_construtivo = document.getElementById('padrao_construtivo').value;
+
+            let fator_ajuste = 0;
+            if (padrao_construtivo === "Alto") fator_ajuste = 0.4;
+            else if (padrao_construtivo === "Normal") fator_ajuste = 0.2;
+            else if (padrao_construtivo === "Baixo") fator_ajuste = 0.0;
+
+            const custo_m2 = CUB * (1 + fator_ajuste);
+            const potencial_m2 = potencial / custo_m2;
+
+            let aco_consumo = 0, concreto_consumo = 0;
+            if (padrao_construtivo === "Alto") {
+                aco_consumo = potencial_m2 * 22;
+                concreto_consumo = potencial_m2 * 0.55;
+            } else if (padrao_construtivo === "Normal") {
+                aco_consumo = potencial_m2 * 15;
+                concreto_consumo = potencial_m2 * 0.47;
+            } else if (padrao_construtivo === "Baixo") {
+                aco_consumo = potencial_m2 * 12;
+                concreto_consumo = potencial_m2 * 0.3;
+            }
+
+            const esquadrias_total = esquadrias_consumo * esquadrias_m2;
+            const revestimento_total = revestimento_consumo * revestimentos_m2;
+
+            const aco_total = aco_mercado * aco_consumo;
+            const concreto_total = concreto_mercado * concreto_consumo;
+            const laje_total = laje_mercado * potencial_m2;
+
+            const custo_total = esquadrias_total + revestimento_total + concreto_total + aco_total + laje_total;
+
+            document.getElementById('results').innerHTML = `
+                <p><strong>Custo Total:</strong> ${custo_total.toFixed(2)}</p>
+                <p><strong>Aço Total:</strong> ${aco_total.toFixed(2)}</p>
+                <p><strong>Concreto Total:</strong> ${concreto_total.toFixed(2)}</p>
+                <p><strong>Laje Total:</strong> ${laje_total.toFixed(2)}</p>
+                <p><strong>Revestimento Total:</strong> ${revestimento_total.toFixed(2)}</p>
+                <p><strong>Esquadrias Total:</strong> ${esquadrias_total.toFixed(2)}</p>
+            `;
+        }
+    </script>
+</body>
+</html>
